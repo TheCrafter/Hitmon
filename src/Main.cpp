@@ -2,7 +2,7 @@
 
 #define TRAY_ID 666
 
-LRESULT CALLBACK hitmonWindowProc(
+LRESULT CALLBACK HitmonWindowProc(
     HWND   window,
     UINT   msg,
     WPARAM wParam,
@@ -24,18 +24,18 @@ LRESULT CALLBACK hitmonWindowProc(
     return 0;
 }
 
-WNDCLASSEX createWindowClass(HINSTANCE instance)
+WNDCLASSEX CreateWindowClass(HINSTANCE instance)
 {
     WNDCLASSEX mainWClass;
     mainWClass.cbSize = sizeof(WNDCLASSEX);
     mainWClass.style = CS_HREDRAW | CS_VREDRAW;
-    mainWClass.lpfnWndProc = hitmonWindowProc;
+    mainWClass.lpfnWndProc = HitmonWindowProc;
     mainWClass.cbClsExtra = 0;
     mainWClass.cbWndExtra = 0;
     mainWClass.hInstance = instance;
     mainWClass.hIcon = LoadIcon(0, IDI_SHIELD);
     mainWClass.hCursor = LoadCursor(0, IDC_CROSS);
-    mainWClass.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
+    mainWClass.hbrBackground = 0;
     mainWClass.lpszMenuName = 0;
     mainWClass.lpszClassName = "MainWClass";
     mainWClass.hIconSm = 0;
@@ -43,7 +43,7 @@ WNDCLASSEX createWindowClass(HINSTANCE instance)
     return mainWClass;
 }
 
-NOTIFYICONDATA createTrayData(HWND window)
+NOTIFYICONDATA CreateTrayData(HWND window)
 {
     NOTIFYICONDATA rVal;
     rVal.cbSize = sizeof(rVal);
@@ -65,7 +65,7 @@ int CALLBACK WinMain(
     int       cmdShow)
 {
     // Create window class
-    WNDCLASSEX mainWClass = createWindowClass(instance);
+    WNDCLASSEX mainWClass = CreateWindowClass(instance);
     
     // Register window class
     if(RegisterClassEx(&mainWClass) == 0)
@@ -76,10 +76,7 @@ int CALLBACK WinMain(
         0,                              // Extended window style of the window created
         "MainWClass",                   // Class name from previous call to RegisterClass[Ex]
         "Hitmon",                       // Window Name
-        WS_OVERLAPPEDWINDOW |
-        WS_MAXIMIZEBOX      |
-        WS_MINIMIZEBOX      |
-        WS_VISIBLE,                     // Window style
+        0,                              // Window style
         64,                             // Initial x position for window
         64,                             // Initial y position for window
         640,                            // Window width
@@ -93,7 +90,7 @@ int CALLBACK WinMain(
         return -1;
 
     // Show tray icon
-    NOTIFYICONDATA trayData = createTrayData(window);
+    NOTIFYICONDATA trayData = CreateTrayData(window);
     Shell_NotifyIcon(NIM_ADD, &trayData);
 
     MSG msg;
