@@ -1,6 +1,7 @@
 #include "windows.h"
 
 #define TRAY_ID 666
+#define TRAY_MSG 666
 
 LRESULT CALLBACK HitmonWindowProc(
     HWND   window,
@@ -10,6 +11,50 @@ LRESULT CALLBACK HitmonWindowProc(
 {
     switch(msg)
     {
+        // Handle messages from tray icon
+        case TRAY_MSG:
+        {
+            switch(lParam)
+            {
+                case WM_LBUTTONDOWN:
+                {
+                    // Show Popup menu
+                    HMENU menu = CreatePopupMenu();
+                    if(menu == 0)
+                        return 0;
+
+                    unsigned int exitId = 1;
+                    if(InsertMenu(
+                        menu,
+                        1,
+                        MF_BYPOSITION   |
+                        MF_ENABLED      |
+                        MF_STRING,
+                        exitId,
+                        "exit") == 0)
+                    {
+                        return 0;
+                    }
+
+                    // Retrieve current cursor position
+                    POINT curPos;
+                    GetCursorPos(&curPos);
+
+                    unsigned int trackResult = TrackPopupMenuEx(
+                        menu,
+                        TPM_RETURNCMD,
+                        curPos.x,
+                        curPos.y,
+                        window,
+                        0);
+
+                    if(trackResult == exitId)
+                        SendMessage(window, WM_CLOSE, 0, 0);
+
+                }break;
+            }
+        }break;
+
         case WM_DESTROY:
         {
             PostQuitMessage(0);
@@ -43,17 +88,20 @@ WNDCLASSEX CreateWindowClass(HINSTANCE instance)
     return mainWClass;
 }
 
-NOTIFYICONDATA CreateTrayData(HWND window)
+NOTIFYICONDATA ShowTrayIcon(HWND window)
 {
     NOTIFYICONDATA rVal;
     rVal.cbSize = sizeof(rVal);
     rVal.hWnd = window;
     rVal.uID = TRAY_ID;
-    rVal.uFlags = NIF_ICON | NIF_TIP;
+    rVal.uFlags = NIF_MESSAGE | NIF_ICON | NIF_TIP;
+    rVal.uCallbackMessage = TRAY_MSG;
     rVal.hIcon = LoadIcon(0, IDI_SHIELD);
     strncpy(rVal.szTip, "Hitmon is running...", 128);
     // Set guid later
     //rVal.guidItem = ...;
+
+    Shell_NotifyIcon(NIM_ADD, &rVal);
 
     return rVal;
 }
@@ -64,6 +112,10 @@ int CALLBACK WinMain(
     LPSTR     cmdArgs,
     int       cmdShow)
 {
+    (void)prevInstance;
+    (void)cmdArgs;
+    (void)cmdShow;
+
     // Create window class
     WNDCLASSEX mainWClass = CreateWindowClass(instance);
     
@@ -90,8 +142,7 @@ int CALLBACK WinMain(
         return -1;
 
     // Show tray icon
-    NOTIFYICONDATA trayData = CreateTrayData(window);
-    Shell_NotifyIcon(NIM_ADD, &trayData);
+    NOTIFYICONDATA trayData = ShowTrayIcon(window);
 
     MSG msg;
     int getMsgRVal;
