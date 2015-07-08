@@ -1,5 +1,7 @@
 #include "windows.h"
 
+#define TRAY_ID 666
+
 LRESULT CALLBACK hitmonWindowProc(
     HWND   window,
     UINT   msg,
@@ -41,6 +43,21 @@ WNDCLASSEX createWindowClass(HINSTANCE instance)
     return mainWClass;
 }
 
+NOTIFYICONDATA createTrayData(HWND window)
+{
+    NOTIFYICONDATA rVal;
+    rVal.cbSize = sizeof(rVal);
+    rVal.hWnd = window;
+    rVal.uID = TRAY_ID;
+    rVal.uFlags = NIF_ICON | NIF_TIP;
+    rVal.hIcon = LoadIcon(0, IDI_SHIELD);
+    strncpy(rVal.szTip, "Hitmon is running...", 128);
+    // Set guid later
+    //rVal.guidItem = ...;
+
+    return rVal;
+}
+
 int CALLBACK WinMain(
     HINSTANCE instance,
     HINSTANCE prevInstance,
@@ -75,6 +92,10 @@ int CALLBACK WinMain(
     if(window == 0)
         return -1;
 
+    // Show tray icon
+    NOTIFYICONDATA trayData = createTrayData(window);
+    Shell_NotifyIcon(NIM_ADD, &trayData);
+
     MSG msg;
     int getMsgRVal;
     while((getMsgRVal = GetMessage(&msg, 0, 0, 0)) != 0)
@@ -82,10 +103,12 @@ int CALLBACK WinMain(
         if(getMsgRVal == -1)
             return -1;
 
-        // TODO: Read WHY I need TranslateMessage
+        // TODO: Enable it when I want character input
         //TranslateMessage(&msg);
         DispatchMessage(&msg);
     }
-
+    
+    // Hide tray icon
+    Shell_NotifyIcon(NIM_DELETE, &trayData);
     return 0;
 }
