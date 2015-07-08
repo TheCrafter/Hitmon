@@ -31,8 +31,8 @@ WNDCLASSEX createWindowClass(HINSTANCE instance)
     mainWClass.cbClsExtra = 0;
     mainWClass.cbWndExtra = 0;
     mainWClass.hInstance = instance;
-    mainWClass.hIcon = 0;
-    mainWClass.hCursor = 0;
+    mainWClass.hIcon = LoadIcon(0, IDI_SHIELD);
+    mainWClass.hCursor = LoadCursor(0, IDC_CROSS);
     mainWClass.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
     mainWClass.lpszMenuName = 0;
     mainWClass.lpszClassName = "MainWClass";
@@ -74,9 +74,6 @@ int CALLBACK WinMain(
 
     if(window == 0)
         return -1;
-
-    ShowWindow(window, SW_SHOWDEFAULT);
-    UpdateWindow(window);
 
     MSG msg;
     int getMsgRVal;
