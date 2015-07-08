@@ -1,7 +1,17 @@
-#include "windows.h"
+#include <windows.h>
+#include "PopupMenu.hpp"
 
 #define TRAY_ID 666
 #define TRAY_MSG 666
+
+// TODO: Temporary global variable. Will refactor it later.
+PopupMenu* menu;
+
+void HandleMenuSelection(PopupMenu::MenuItem item, HWND window)
+{
+    if(item.id == menu->GetIdByTitle("exit"))
+        SendMessage(window, WM_CLOSE, 0, 0);
+}
 
 LRESULT CALLBACK HitmonWindowProc(
     HWND   window,
@@ -18,45 +28,22 @@ LRESULT CALLBACK HitmonWindowProc(
             {
                 case WM_LBUTTONDOWN:
                 {
-                    // Show Popup menu
-                    HMENU menu = CreatePopupMenu();
-                    if(menu == 0)
-                        return 0;
-
-                    unsigned int exitId = 1;
-                    if(InsertMenu(
-                        menu,
-                        1,
-                        MF_BYPOSITION   |
-                        MF_ENABLED      |
-                        MF_STRING,
-                        exitId,
-                        "exit") == 0)
-                    {
-                        return 0;
-                    }
-
-                    // Retrieve current cursor position
-                    POINT curPos;
-                    GetCursorPos(&curPos);
-
-                    unsigned int trackResult = TrackPopupMenuEx(
-                        menu,
-                        TPM_RETURNCMD,
-                        curPos.x,
-                        curPos.y,
-                        window,
-                        0);
-
-                    if(trackResult == exitId)
-                        SendMessage(window, WM_CLOSE, 0, 0);
-
+                    menu->Show();
                 }break;
             }
         }break;
 
+        case WM_CREATE:
+        {
+            menu = new PopupMenu(window, HandleMenuSelection);
+            menu->AddItem(1, "Do something");
+            menu->AddItem(2, "Do something else");
+            menu->AddItem(3, "exit");
+        }break;
+
         case WM_DESTROY:
         {
+            delete menu;
             PostQuitMessage(0);
         }break;
 
