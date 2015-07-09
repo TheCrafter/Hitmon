@@ -1,8 +1,8 @@
 #include <windows.h>
 #include "PopupMenu.hpp"
 
-#define TRAY_ID 666
-#define TRAY_MSG 666
+#define TRAY_ID WM_USER + 1
+#define TRAY_MSG WM_USER + 2
 
 struct WindowData
 {
@@ -144,11 +144,8 @@ int CALLBACK WinMain(
 
     MSG msg;
     int getMsgRVal;
-    while((getMsgRVal = GetMessage(&msg, 0, 0, 0)) != 0)
+    while((getMsgRVal = GetMessage(&msg, 0, 0, 0)) > 0)
     {
-        if(getMsgRVal == -1)
-            return -1;
-
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }
