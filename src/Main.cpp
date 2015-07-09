@@ -149,8 +149,7 @@ int CALLBACK WinMain(
         if(getMsgRVal == -1)
             return -1;
 
-        // TODO: Enable it when I want character input
-        //TranslateMessage(&msg);
+        TranslateMessage(&msg);
         DispatchMessage(&msg);
     }
     
