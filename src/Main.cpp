@@ -4,12 +4,15 @@
 #define TRAY_ID 666
 #define TRAY_MSG 666
 
-// TODO: Temporary global variable. Will refactor it later.
-PopupMenu* menu;
+struct WindowData
+{
+    PopupMenu* menu;
+};
 
 void HandleMenuSelection(PopupMenu::MenuItem item, HWND window)
 {
-    if(item.id == menu->GetIdByTitle("exit"))
+    WindowData* data = (WindowData*)GetWindowLongPtr(window, GWLP_USERDATA);
+    if(item.id == data->menu->GetIdByTitle("exit"))
         SendMessage(window, WM_CLOSE, 0, 0);
 }
 
@@ -28,22 +31,30 @@ LRESULT CALLBACK HitmonWindowProc(
             {
                 case WM_LBUTTONDOWN:
                 {
-                    menu->Show();
+                    WindowData* data = (WindowData*)GetWindowLongPtr(window, GWLP_USERDATA);
+                    data->menu->Show();
                 }break;
             }
         }break;
 
         case WM_CREATE:
         {
-            menu = new PopupMenu(window, HandleMenuSelection);
-            menu->AddItem(1, "Do something");
-            menu->AddItem(2, "Do something else");
-            menu->AddItem(3, "exit");
+            // Configure window data
+            WindowData* data = new WindowData();
+            data->menu = new PopupMenu(window, HandleMenuSelection);
+            data->menu->AddItem(1, "Do something");
+            data->menu->AddItem(2, "Do something else");
+            data->menu->AddItem(3, "exit");
+
+            // Set userdata
+            SetWindowLongPtr(window, GWLP_USERDATA, (LONG_PTR)data);
         }break;
 
         case WM_DESTROY:
         {
-            delete menu;
+            WindowData* data = (WindowData*)GetWindowLongPtr(window, GWLP_USERDATA);
+            delete data->menu;
+            delete data;
             PostQuitMessage(0);
         }break;
 
