@@ -1,17 +1,32 @@
 #include <windows.h>
 #include "PopupMenu.hpp"
+#include "UI/Window.hpp"
 
 #define TRAY_ID WM_USER + 1
 #define TRAY_MSG WM_USER + 2
 
-struct WindowData
+class WindowData
 {
+public:
+    LPCTSTR wndClassName;
+    UI::Window<WindowData>* thisWindow;
     PopupMenu* menu;
+
+    WNDPROC wndProcCallback;
+
+    WindowData(LPCTSTR className)
+        : wndClassName(className),
+        wndProcCallback(DefWindowProc),
+        menu(0)
+    {
+    }
 };
 
 void HandleMenuSelection(PopupMenu::MenuItem item, HWND window)
 {
+    // Retrieve user data
     WindowData* data = (WindowData*)GetWindowLongPtr(window, GWLP_USERDATA);
+
     if(item.id == data->menu->GetIdByTitle("exit"))
         SendMessage(window, WM_CLOSE, 0, 0);
 }
@@ -40,21 +55,17 @@ LRESULT CALLBACK HitmonWindowProc(
         case WM_CREATE:
         {
             // Configure window data
-            WindowData* data = new WindowData();
+            WindowData* data = (WindowData*)GetWindowLongPtr(window, GWLP_USERDATA);
             data->menu = new PopupMenu(window, HandleMenuSelection);
             data->menu->AddItem(1, "Do something");
             data->menu->AddItem(2, "Do something else");
             data->menu->AddItem(3, "exit");
-
-            // Set userdata
-            SetWindowLongPtr(window, GWLP_USERDATA, (LONG_PTR)data);
         }break;
 
         case WM_DESTROY:
         {
             WindowData* data = (WindowData*)GetWindowLongPtr(window, GWLP_USERDATA);
             delete data->menu;
-            delete data;
             PostQuitMessage(0);
         }break;
 
@@ -65,25 +76,6 @@ LRESULT CALLBACK HitmonWindowProc(
     }
 
     return 0;
-}
-
-WNDCLASSEX CreateWindowClass(HINSTANCE instance)
-{
-    WNDCLASSEX mainWClass;
-    mainWClass.cbSize = sizeof(WNDCLASSEX);
-    mainWClass.style = CS_HREDRAW | CS_VREDRAW;
-    mainWClass.lpfnWndProc = HitmonWindowProc;
-    mainWClass.cbClsExtra = 0;
-    mainWClass.cbWndExtra = 0;
-    mainWClass.hInstance = instance;
-    mainWClass.hIcon = LoadIcon(0, IDI_SHIELD);
-    mainWClass.hCursor = LoadCursor(0, IDC_CROSS);
-    mainWClass.hbrBackground = 0;
-    mainWClass.lpszMenuName = 0;
-    mainWClass.lpszClassName = "MainWClass";
-    mainWClass.hIconSm = 0;
-
-    return mainWClass;
 }
 
 NOTIFYICONDATA ShowTrayIcon(HWND window)
@@ -114,33 +106,18 @@ int CALLBACK WinMain(
     (void)cmdArgs;
     (void)cmdShow;
 
-    // Create window class
-    WNDCLASSEX mainWClass = CreateWindowClass(instance);
-    
-    // Register window class
-    if(RegisterClassEx(&mainWClass) == 0)
-        return -1;
+    WindowData data("mainWindowClass");
+    data.wndProcCallback = HitmonWindowProc;
 
-    // Create window
-    HWND window = CreateWindowEx(
-        0,                              // Extended window style of the window created
-        "MainWClass",                   // Class name from previous call to RegisterClass[Ex]
-        "Hitmon",                       // Window Name
-        0,                              // Window style
-        64,                             // Initial x position for window
-        64,                             // Initial y position for window
-        640,                            // Window width
-        480,                            // Window height
-        0,                              // Handle to parent window
-        0,                              // Handle to menu
-        instance,                       // A handle to the instance of the module to be associated with the window.
-        0);                             // Pointer to params for the window
+    UI::Window<WindowData> window(data);
 
-    if(window == 0)
-        return -1;
+    WindowData* wndData = window.GetDataPtr();
+    wndData->thisWindow = &window;
+
+    window.Init(instance);
 
     // Show tray icon
-    NOTIFYICONDATA trayData = ShowTrayIcon(window);
+    NOTIFYICONDATA trayData = ShowTrayIcon(window.GetWindow());
 
     MSG msg;
     int getMsgRVal;
