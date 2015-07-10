@@ -26,6 +26,9 @@ namespace UI
 ///     // Members you NEED to have
 ///     LPCTSTR wndClassName;
 ///     Window<MyWindowData>* thisWindow;
+///
+///     // Instead of this you can just create your own window
+///     // proc as member function
 ///     WNDPROC wndProcCallback;
 ///     //------------------------
 ///
