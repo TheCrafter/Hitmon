@@ -4,20 +4,20 @@
 
 template<typename WindowData>
 Window<WindowData>::Window(WindowData data)
-	: mData(data)
+    : mData(data)
 {
 }
 
 template<typename WindowData>
 bool Window<WindowData>::Init(HINSTANCE instance)
 {
-	if(!RegisterWindowClass(instance))
-		return false;
+    if(!RegisterWindowClass(instance))
+        return false;
 
-	// Create window
+    // Create window
     mWindow = CreateWindowEx(
         0,                              // Extended window style of the window created
-        mData.wndClassName,             // Class name from previous call to RegisterClass[Ex]
+        mData.GetClassName(),           // Class name from previous call to RegisterClass[Ex]
         "Hitmon",                       // Window Name
         0,                              // Window style
         64,                             // Initial x position for window
@@ -29,18 +29,18 @@ bool Window<WindowData>::Init(HINSTANCE instance)
         instance,                       // A handle to the instance of the module to be associated with the window.
         (LPVOID)&mData);                // Pointer to params for the window
 
-	return mWindow != 0;
+    return mWindow != 0;
 }
 
 template<typename WindowData>
 HWND Window<WindowData>::GetWindow() const
 {
-	return mWindow;
+    return mWindow;
 }
 template<typename WindowData>
 WindowData* Window<WindowData>::GetDataPtr()
 {
-	return &mData;
+    return &mData;
 }
 
 //==================================================
@@ -61,10 +61,10 @@ bool Window<WindowData>::RegisterWindowClass(HINSTANCE instance)
         windowClass.hCursor = LoadCursor(0, IDC_CROSS);
         windowClass.hbrBackground = 0;
         windowClass.lpszMenuName = 0;
-        windowClass.lpszClassName = mData.wndClassName;
+        windowClass.lpszClassName = mData.GetClassName();
         windowClass.hIconSm = 0;
 
-		return RegisterClassEx(&windowClass) != 0;
+        return RegisterClassEx(&windowClass) != 0;
 }
 
 template<typename WindowData>
@@ -74,29 +74,29 @@ LRESULT CALLBACK Window<WindowData>::WindowProc(
         WPARAM wParam,
         LPARAM lParam)
 {
-	// WM_GETMINMAXINFO is the first message sent to window proc
-	// so just pass it to the default window procedure
-	if(msg == WM_GETMINMAXINFO)
-		return DefWindowProc(window, msg, wParam, lParam);
+    // WM_GETMINMAXINFO is the first message sent to window proc
+    // so just pass it to the default window procedure
+    if(msg == WM_GETMINMAXINFO)
+        return DefWindowProc(window, msg, wParam, lParam);
 
-	if(msg == WM_NCCREATE)
-	{
-		// Retrieve create parameters
-		LPCREATESTRUCT createStruct = (LPCREATESTRUCT)lParam;
+    if(msg == WM_NCCREATE)
+    {
+        // Retrieve create parameters
+        LPCREATESTRUCT createStruct = (LPCREATESTRUCT)lParam;
 
-		// Extract window data
-		WindowData* data = (WindowData*)createStruct->lpCreateParams;
+        // Extract window data
+        WindowData* data = (WindowData*)createStruct->lpCreateParams;
 
-		// Set window user data
-		SetWindowLongPtr(window, GWLP_USERDATA, (LONG_PTR)data);
+        // Set window user data
+        SetWindowLongPtr(window, GWLP_USERDATA, (LONG_PTR)data);
 
-		// Return callback function
-		return data->wndProcCallback(window, msg, wParam, lParam);
-	}
+        // Return callback function
+        return data->wndProcCallback(window, msg, wParam, lParam);
+    }
 
-	// Retrieve user data
-	WindowData* data = (WindowData*)GetWindowLongPtr(window, GWLP_USERDATA);
+    // Retrieve user data
+    WindowData* data = (WindowData*)GetWindowLongPtr(window, GWLP_USERDATA);
 
-	// Return callback function
-	return data->wndProcCallback(window, msg, wParam, lParam);
+    // Return callback function
+    return data->wndProcCallback(window, msg, wParam, lParam);
 }

@@ -4,6 +4,8 @@
 
 namespace UI
 {
+    const std::string MainWindowData::mClassName = "MainWindowClass";
+
     //==================================================
     //= Public functions
     //==================================================
@@ -61,6 +63,11 @@ namespace UI
         }
 
         return 0;
+    }
+
+    LPCTSTR MainWindowData::GetClassName() const
+    {
+        return mClassName.c_str();
     }
 
     //==================================================

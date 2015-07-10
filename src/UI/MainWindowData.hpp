@@ -2,6 +2,7 @@
 #define HITMON_MAINWINDOWDATA
 
 #include <Windows.h>
+#include <string>
 #include "Window.hpp"
 #include "PopupMenu.hpp"
 
@@ -23,8 +24,11 @@ public:
         WPARAM wParam,
         LPARAM lParam);
 
+    LPCTSTR GetClassName() const;
+
 private:
     PopupMenu* menu;
+    const static std::string mClassName;
 
     void HandleMenuSelection(PopupMenu::MenuItem item, HWND window);
 };
