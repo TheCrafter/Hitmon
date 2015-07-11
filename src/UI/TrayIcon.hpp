@@ -28,48 +28,33 @@
 /*                                                        */
 /**********************************************************/
 
-#include <windows.h>
-#include "Config.hpp"
-#include "PopupMenu.hpp"
-#include "UI/Window.hpp"
-#include "UI/MainWindowData.hpp"
-#include "UI/TrayIcon.hpp"
+#ifndef HITMON_TRAYICON
+#define HITMON_TRAYICON
 
-int CALLBACK WinMain(
-    HINSTANCE instance,
-    HINSTANCE prevInstance,
-    LPSTR     cmdArgs,
-    int       cmdShow)
+#include <Windows.h>
+#include <string>
+
+namespace UI
 {
-    // Avoid "unused formal variable" warnings
-    (void)prevInstance;
-    (void)cmdArgs;
-    (void)cmdShow;
 
-    // Create the window
-    UI::MainWindowData data;
+/// Creates and shows a tray icon in taskbar notification area
+class TrayIcon
+{
+public:
+    /// Constructor
+    TrayIcon(HWND window, const std::string& hoverMsg);
 
-    UI::Window<UI::MainWindowData> window(data);
+    /// Destructor
+    ~TrayIcon();
 
-    UI::MainWindowData* wndData = window.GetDataPtr();
-    wndData->thisWindow = &window;
+    /// Show the icon
+    void Show();
 
-    if(!window.Init(instance))
-        return -1;
+private:
+    /// Struct that holds the icon's data
+    NOTIFYICONDATA mIconData;
+};
 
-    // Create and show the tray icon
-    UI::TrayIcon trayIcon(window.GetWindow(), "Hitmon is running...");
+} // namespace UI
 
-    trayIcon.Show();
-
-    // Message loop
-    MSG msg;
-    int getMsgRVal;
-    while((getMsgRVal = GetMessage(&msg, 0, 0, 0)) > 0)
-    {
-        TranslateMessage(&msg);
-        DispatchMessage(&msg);
-    }
-
-    return 0;
-}
+#endif
