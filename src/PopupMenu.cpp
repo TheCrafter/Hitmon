@@ -1,4 +1,5 @@
 #include "PopupMenu.hpp"
+#include <algorithm>
 
 PopupMenu::PopupMenu(HWND ownerWindow, std::function<void(MenuItem, HWND)> selectionHandlerCallback)
     : mOwnerWindow(ownerWindow),
@@ -55,13 +56,13 @@ void PopupMenu::Show()
 
 unsigned int PopupMenu::GetIdByTitle(const std::string& title)
 {
-    for(std::map<unsigned int, MenuItem>::iterator it = mMenuItems.begin();
-        it != mMenuItems.end();
-        ++it)
+    auto iterator = std::find_if(
+        std::begin(mMenuItems),
+        std::end(mMenuItems),
+        [&title](std::pair<unsigned int, MenuItem> pair) -> bool
     {
-        if(it->second.title.compare(title) == 0)
-            return it->first;
-    }
+        return pair.second.title.compare(title) == 0;
+    });
 
-    return 0;
+    return (iterator != std::end(mMenuItems)) ? iterator->first : 0;
 }

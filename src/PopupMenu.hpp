@@ -1,3 +1,33 @@
+/**********************************************************/
+/*                                                        */
+/*              __/^\__                                   */
+/*            ./       \.                                 */
+/*           /    ___    \    THE                         */
+/*          /   ./   \.   \    CRAFTER                    */
+/*         /  ./       \.  \                              */
+/*        /  / ___   ___ \  \                             */
+/*       /  / |___|-|___| \  \                            */
+/*      /  /               \  \                           */
+/*      \  \               /  /                           */
+/*       \  \/\         /\/  /                            */
+/*        \    \       /    /                             */
+/*         `\   \     /   /`                              */
+/*           `\  \   /  /`                                */
+/*             `\_\ /_/`                                  */
+/*    /  /                   \  \                         */
+/*   /   \                   /    \                       */
+/*   |  _.\\                 //._  |                      */
+/*   !!!!  \|               |/  !!!!                      */
+/*   \\\\                       ////                      */
+/*   _______________________________                      */
+/*   | o o o o o ------ o o o o o o |                     */
+/*   | o ~ ~ o ~~ o o o o o o o o ~~|                     */
+/*   | o ~ ~ o o ~~ o o o o o o o ~~|                     */
+/*   | o - - - - - - - - - - - - - ~|                     */
+/*   |______________________________|                     */
+/*                                                        */
+/**********************************************************/
+
 #ifndef HITMON_POPUPMENU
 #define HITMON_POPUPMENU
 
@@ -6,20 +36,11 @@
 #include <functional>
 #include <map>
 
-//==================================================
-/// \brief A simple class that encapsulates the basic
-///        logic for a PopupMenu.
-///
-/// The class currently contains only basic management
-/// of the PopupMenu. See it's public member functions
-/// for more information.
-//==================================================
+/// A simple class that encapsulates the basic logic for a PopupMenu
 class PopupMenu
 {
 public:
-    //==================================================
-    /// \brief Plain data class to group an item's attributes.
-    //==================================================
+    /// Plain data class to group an item's attributes
     class MenuItem
     {
     public:
@@ -33,36 +54,19 @@ public:
         std::string title;
     };
 
-    //==================================================
     /// Constructor
-    //==================================================
     PopupMenu(HWND ownerWindow, std::function<void(MenuItem, HWND)> selectionHandlerCallback);
     
-    //==================================================
     /// Destructor
-    //==================================================
     ~PopupMenu();
 
-    //==================================================
-    /// \brief Adds a new item on menu.
-    ///
-    /// \param pos The position of the item.
-    /// \param title The title of the item.
-    //==================================================
+    /// Adds a new item on menu.
     void AddItem(int pos, const std::string& title);
 
-    //==================================================
-    /// \brief Shows the menu in the current cursor position.
-    //==================================================
+    /// Shows the menu in the current cursor position
     void Show();
 
-    //==================================================
-    /// \brief Gets the id of a menu item by each title.
-    ///
-    /// \param title The title to search.
-    ///
-    /// \return The id of the item or 0 if the id does not exist.
-    //==================================================
+    /// Retrieves the id of a menu item by its title
     unsigned int GetIdByTitle(const std::string& title);
 
 private:

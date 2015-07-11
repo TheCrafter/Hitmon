@@ -4,15 +4,18 @@
 
 namespace UI
 {
+    //==================================================
+    //= Static members
+    //==================================================
+
     const std::string MainWindowData::mClassName = "MainWindowClass";
+
 
     //==================================================
     //= Public functions
     //==================================================
 
-    MainWindowData::MainWindowData(LPCTSTR className)
-        : wndClassName(className),
-        menu(0)
+    MainWindowData::MainWindowData() : mTaskbarIconMenu(0)
     {
     }
 
@@ -31,7 +34,7 @@ namespace UI
                 {
                     case WM_LBUTTONDOWN:
                     {
-                        menu->Show();
+                        mTaskbarIconMenu->Show();
                     }break;
                 }
             }break;
@@ -44,15 +47,15 @@ namespace UI
                     std::placeholders::_1,
                     std::placeholders::_2);
 
-                menu = new PopupMenu(window, x);
-                menu->AddItem(1, "Do something");
-                menu->AddItem(2, "Do something else");
-                menu->AddItem(3, "exit");
+                mTaskbarIconMenu = new PopupMenu(window, x);
+                mTaskbarIconMenu->AddItem(1, "Do something");
+                mTaskbarIconMenu->AddItem(2, "Do something else");
+                mTaskbarIconMenu->AddItem(3, "exit");
             }break;
 
             case WM_DESTROY:
             {
-                delete menu;
+                delete mTaskbarIconMenu;
                 PostQuitMessage(0);
             }break;
 
@@ -76,7 +79,7 @@ namespace UI
 
     void MainWindowData::HandleMenuSelection(PopupMenu::MenuItem item, HWND window)
     {
-        if(item.id == menu->GetIdByTitle("exit"))
+        if(item.id == mTaskbarIconMenu->GetIdByTitle("exit"))
             SendMessage(window, WM_CLOSE, 0, 0);
     }
 
