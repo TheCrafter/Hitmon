@@ -46,21 +46,13 @@ int CALLBACK WinMain(
     (void)cmdArgs;
     (void)cmdShow;
 
-    // Create the window
+    // Create the window data
     UI::MainWindowData data;
 
+    // Create the window
     UI::Window<UI::MainWindowData> window(data);
-
-    UI::MainWindowData* wndData = window.GetDataPtr();
-    wndData->thisWindow = &window;
-
     if(!window.Init(instance))
         return -1;
-
-    // Create and show the tray icon
-    UI::TrayIcon trayIcon(window.GetWindow(), "Hitmon is running...");
-
-    trayIcon.Show();
 
     // Message loop
     MSG msg;

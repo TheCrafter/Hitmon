@@ -41,7 +41,7 @@ namespace UI
 ///
 /// \tparam WindowData This template parameter should be a struct or a
 ///         class with at least 3 public members (LPCTSTR GetClassName(), 
-///         Window<WindowData>*, WNDPROC).
+///         WNDPROC).
 //==================================================
 template<typename WindowData>
 class Window
@@ -55,9 +55,6 @@ public:
     
     /// Retrieves the handle of the window
     HWND GetWindow() const;
-
-    /// Retrieves a pointer to this window's data
-    WindowData* GetDataPtr();
 
 private:
     /// Window's data

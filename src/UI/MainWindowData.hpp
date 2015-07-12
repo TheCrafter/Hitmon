@@ -34,7 +34,7 @@
 #include <Windows.h>
 #include <string>
 #include "Window.hpp"
-#include "PopupMenu.hpp"
+#include "TrayIcon.hpp"
 
 namespace UI
 {
@@ -43,9 +43,6 @@ namespace UI
 class MainWindowData
 {
 public:
-    // TODO: Try to make thisWindow private
-    Window<MainWindowData>* thisWindow;
-
     /// Constructor
     MainWindowData();
 
@@ -60,14 +57,11 @@ public:
     LPCTSTR GetClassName() const;
 
 private:
-    /// The taskbar's icon menu
-    PopupMenu* mTaskbarIconMenu;
-
     /// Class name to use with RegisterClass[Ex]()
     const static std::string mClassName;
 
-    /// Function to handle selections from taskbar icon's menu
-    void HandleMenuSelection(PopupMenu::MenuItem item, HWND window);
+    /// The icon that appears in system tray
+    TrayIcon mTrayIcon;
 };
 
 } // namespace UI

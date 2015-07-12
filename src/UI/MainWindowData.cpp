@@ -15,7 +15,7 @@ namespace UI
     //= Public functions
     //==================================================
 
-    MainWindowData::MainWindowData() : mTaskbarIconMenu(0)
+    MainWindowData::MainWindowData()
     {
     }
 
@@ -34,28 +34,20 @@ namespace UI
                 {
                     case WM_LBUTTONDOWN:
                     {
-                        mTaskbarIconMenu->Show();
+                        mTrayIcon.ShowMenu();
                     }break;
                 }
             }break;
 
             case WM_CREATE:
             {
-                auto x = std::bind(
-                    &MainWindowData::HandleMenuSelection,
-                    this,
-                    std::placeholders::_1,
-                    std::placeholders::_2);
-
-                mTaskbarIconMenu = new PopupMenu(window, x);
-                mTaskbarIconMenu->AddItem(1, "Do something");
-                mTaskbarIconMenu->AddItem(2, "Do something else");
-                mTaskbarIconMenu->AddItem(3, "exit");
+                mTrayIcon.Init(window, "Hitmon is running...");
+                mTrayIcon.Show();
             }break;
 
             case WM_DESTROY:
             {
-                delete mTaskbarIconMenu;
+                mTrayIcon.Shutdown();
                 PostQuitMessage(0);
             }break;
 
@@ -71,16 +63,6 @@ namespace UI
     LPCTSTR MainWindowData::GetClassName() const
     {
         return mClassName.c_str();
-    }
-
-    //==================================================
-    //= Private functions
-    //==================================================
-
-    void MainWindowData::HandleMenuSelection(PopupMenu::MenuItem item, HWND window)
-    {
-        if(item.id == mTaskbarIconMenu->GetIdByTitle("exit"))
-            SendMessage(window, WM_CLOSE, 0, 0);
     }
 
 } // namespace UI

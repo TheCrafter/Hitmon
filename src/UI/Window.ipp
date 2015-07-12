@@ -27,7 +27,7 @@ bool Window<WindowData>::Init(HINSTANCE instance)
         0,                              // Handle to parent window
         0,                              // Handle to menu
         instance,                       // A handle to the instance of the module to be associated with the window.
-        (LPVOID)&mData);                // Pointer to params for the window
+        (LPVOID)this);	                // Pointer to params for the window
 
     return mWindow != 0;
 }
@@ -36,11 +36,6 @@ template<typename WindowData>
 HWND Window<WindowData>::GetWindow() const
 {
     return mWindow;
-}
-template<typename WindowData>
-WindowData* Window<WindowData>::GetDataPtr()
-{
-    return &mData;
 }
 
 //==================================================
@@ -85,18 +80,18 @@ LRESULT CALLBACK Window<WindowData>::WindowProc(
         LPCREATESTRUCT createStruct = (LPCREATESTRUCT)lParam;
 
         // Extract window data
-        WindowData* data = (WindowData*)createStruct->lpCreateParams;
+        Window<WindowData>* thisPtr = (Window<WindowData>*)createStruct->lpCreateParams;
 
         // Set window user data
-        SetWindowLongPtr(window, GWLP_USERDATA, (LONG_PTR)data);
+        SetWindowLongPtr(window, GWLP_USERDATA, (LONG_PTR)thisPtr);
 
         // Return callback function
-        return data->wndProcCallback(window, msg, wParam, lParam);
+        return thisPtr->mData.wndProcCallback(window, msg, wParam, lParam);
     }
 
     // Retrieve user data
-    WindowData* data = (WindowData*)GetWindowLongPtr(window, GWLP_USERDATA);
+    Window<WindowData>* thisPtr = (Window<WindowData>*)GetWindowLongPtr(window, GWLP_USERDATA);
 
     // Return callback function
-    return data->wndProcCallback(window, msg, wParam, lParam);
+    return thisPtr->mData.wndProcCallback(window, msg, wParam, lParam);
 }
