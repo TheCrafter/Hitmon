@@ -44,7 +44,7 @@ class MainWindowData
 {
 public:
     /// Constructor
-    MainWindowData();
+    MainWindowData(HINSTANCE instance);
 
     /// Window procedure
     LRESULT CALLBACK wndProcCallback(
@@ -62,6 +62,9 @@ private:
 
     /// The icon that appears in system tray
     TrayIcon mTrayIcon;
+
+    /// Handle to the instance
+    HINSTANCE mInstance;
 };
 
 } // namespace UI

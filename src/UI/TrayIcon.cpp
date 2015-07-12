@@ -1,5 +1,6 @@
 #include "TrayIcon.hpp"
 #include "Config.hpp"
+#include <string>
 
 namespace UI
 {
@@ -7,21 +8,32 @@ namespace UI
     //= Public functions
     //==================================================
 
-    void TrayIcon::Init(HWND window, const std::string& hoverMsg)
+    TrayIcon::TrayIcon()
     {
-        // Setup PopupMenu
-        auto x = std::bind(
-            &TrayIcon::HandleMenuSelection,
-            this,
-            std::placeholders::_1,
-            std::placeholders::_2);
+        mMenuItemsStrings.push_back("Show current hits today");
+        mMenuItemsStrings.push_back("exit");
+    }
 
-        mTaskbarIconMenu = new PopupMenu(window, x);
+    void TrayIcon::Init(HWND window, HINSTANCE instance, const std::string& hoverMsg)
+    {
+        // Init hook
+        mKbdHook.Init(instance);
+
+        // Create PopupMenu
+        mTaskbarIconMenu = new PopupMenu(
+            window,
+            std::bind(
+                &TrayIcon::HandleMenuSelection,
+                this,
+                std::placeholders::_1,
+                std::placeholders::_2));
 
         // Add items to PopupMenu
-        mTaskbarIconMenu->AddItem(1, "Do something");
-        mTaskbarIconMenu->AddItem(2, "Do something else");
-        mTaskbarIconMenu->AddItem(3, "exit");
+        {
+            int pos = 1;
+            for(auto v : mMenuItemsStrings)
+                mTaskbarIconMenu->AddItem(pos++, v);
+        }
 
         // Set IconData
         mIconData.cbSize = sizeof(mIconData);
@@ -60,8 +72,23 @@ namespace UI
     //==================================================
 
     void TrayIcon::HandleMenuSelection(PopupMenu::MenuItem item, HWND window)
-    {
-        if(item.id == mTaskbarIconMenu->GetIdByTitle("exit"))
+    {   
+        //                                      --> Show current hits today <--
+        if(item.id == mTaskbarIconMenu->GetIdByTitle(mMenuItemsStrings[0]))
+        {
+            std::string msg = "Current hits: ";
+            msg += std::to_string(mKbdHook.GetHitCount());
+
+            MessageBox(
+                window,
+                msg.c_str(),
+                "Current hits",
+                MB_ICONINFORMATION);
+        }
+        //                                                   --> exit <--
+        else if(item.id == mTaskbarIconMenu->GetIdByTitle(mMenuItemsStrings[1]))
+        {
             SendMessage(window, WM_CLOSE, 0, 0);
+        }
     }
 }

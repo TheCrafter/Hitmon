@@ -47,7 +47,7 @@ int CALLBACK WinMain(
     (void)cmdShow;
 
     // Create the window data
-    UI::MainWindowData data;
+    UI::MainWindowData data(instance);
 
     // Create the window
     UI::Window<UI::MainWindowData> window(data);

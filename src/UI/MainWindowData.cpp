@@ -15,7 +15,7 @@ namespace UI
     //= Public functions
     //==================================================
 
-    MainWindowData::MainWindowData()
+    MainWindowData::MainWindowData(HINSTANCE instance) : mInstance(instance)
     {
     }
 
@@ -41,7 +41,7 @@ namespace UI
 
             case WM_CREATE:
             {
-                mTrayIcon.Init(window, "Hitmon is running...");
+                mTrayIcon.Init(window, mInstance, "Hitmon is running...");
                 mTrayIcon.Show();
             }break;
 

@@ -28,57 +28,31 @@
 /*                                                        */
 /**********************************************************/
 
-#ifndef HITMON_TRAYICON
-#define HITMON_TRAYICON
+#ifndef HITMON_KBDHOOK
+#define HITMON_KBDHOOK
 
 #include <Windows.h>
-#include <vector>
-#include <string>
-#include "PopupMenu.hpp"
-#include "KbdHook.hpp"
 
-namespace UI
-{
-
-/// Creates and shows a tray icon in taskbar notification area
-class TrayIcon
+class KbdHook
 {
 public:
-    /// Constructor
-    TrayIcon();
+    ~KbdHook();
 
-    /// Initialize the TrayIcon
-    void Init(HWND window, HINSTANCE instance, const std::string& hoverMsg);
+    void Init(HINSTANCE instance);
 
-    /// De-initialize the TrayIcon
-    void Shutdown();
+    unsigned int GetHitCount() const;
 
-    /// Show the icon
-    void Show();
-
-    /// Show popup menu
-    void ShowMenu();
+    void SetHitCount(unsigned int newCount);
 
 private:
-    /// Struct that holds the icon's data
-    NOTIFYICONDATA mIconData;
+    HHOOK mHook;
 
-    /// Handle to the owner window
-    HWND mWindow;
+    unsigned int mHitCount;
 
-    /// The taskbar's icon menu
-    PopupMenu* mTaskbarIconMenu;
-
-    /// Vector with menu items' strings
-    std::vector<std::string> mMenuItemsStrings;
-
-    /// The keyboard hook
-    KbdHook mKbdHook;
-
-    /// Function to handle selections from taskbar icon's menu
-    void HandleMenuSelection(PopupMenu::MenuItem item, HWND window);
+    static LRESULT CALLBACK LowLevelKeyboardProc(
+        int    nCode,
+        WPARAM wParam,
+        LPARAM lParam);
 };
-
-} // namespace UI
 
 #endif

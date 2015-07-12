@@ -60,9 +60,9 @@ unsigned int PopupMenu::GetIdByTitle(const std::string& title)
         std::begin(mMenuItems),
         std::end(mMenuItems),
         [&title](std::pair<unsigned int, MenuItem> pair) -> bool
-    {
-        return pair.second.title.compare(title) == 0;
-    });
+        {
+            return pair.second.title.compare(title) == 0;
+        });
 
     return (iterator != std::end(mMenuItems)) ? iterator->first : 0;
 }
