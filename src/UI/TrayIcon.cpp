@@ -41,7 +41,13 @@ namespace UI
         mIconData.uID = TRAY_ID;
         mIconData.uFlags = NIF_MESSAGE | NIF_ICON | NIF_TIP;
         mIconData.uCallbackMessage = TRAY_MSG;
-        mIconData.hIcon = LoadIcon(0, IDI_SHIELD);
+        mIconData.hIcon = (HICON)LoadImage(
+            instance,
+            "res/hitmon.ico",
+            IMAGE_ICON,
+            LR_DEFAULTSIZE,
+            LR_DEFAULTSIZE,
+            LR_LOADFROMFILE);
 
         // 128 is the maximum size allowed in szTip
         strncpy(mIconData.szTip, hoverMsg.c_str(), 128);
