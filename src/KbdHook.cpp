@@ -1,4 +1,6 @@
 #include "KbdHook.hpp"
+#include "Config.hpp"
+#include "UI/MainWindowData.hpp"
 
 KbdHook* kbdObjPtr = nullptr;
 unsigned int count = 0;
@@ -16,7 +18,19 @@ LRESULT CALLBACK KbdHook::LowLevelKeyboardProc(
         return CallNextHookEx(NULL, nCode, wParam, lParam);
 
     if(wParam == WM_KEYDOWN || wParam == WM_SYSKEYDOWN)
+    {
         kbdObjPtr->SetHitCount(kbdObjPtr->GetHitCount() + 1);
+
+        if(kbdObjPtr->GetHitCount() == 10)
+        {
+            int* x = new int(10);
+            PostMessage(
+                FindWindow(UI::MainWindowData::CLASS_NAME.c_str(), 0),
+                TRAY_HIT_MILESTONE,
+                (WPARAM)x,
+                0);
+        }
+    }
 
     return CallNextHookEx(NULL, nCode, wParam, lParam);
 }

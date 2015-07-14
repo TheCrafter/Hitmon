@@ -31,7 +31,11 @@
 #ifndef HITMON_CONFIG
 #define HITMON_CONFIG
 
-const unsigned short TRAY_ID = 6969;
-const unsigned short TRAY_MSG = WM_USER + 2;
+#define TRAY_ID 6969
+
+#define TRAY_MSG_OFFSET WM_USER + 1
+
+#define TRAY_MSG TRAY_MSG_OFFSET + 1
+#define TRAY_HIT_MILESTONE TRAY_MSG_OFFSET + 2
 
 #endif

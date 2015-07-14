@@ -16,6 +16,8 @@ namespace UI
 
     void TrayIcon::Init(HWND window, HINSTANCE instance, const std::string& hoverMsg)
     {
+        mWindow = window;
+
         // Init hook
         mKbdHook.Init(instance);
 
@@ -71,6 +73,29 @@ namespace UI
     void TrayIcon::ShowMenu()
     {
         mTaskbarIconMenu->Show();
+    }
+
+    void TrayIcon::ShowBalloon(
+        const std::string& title,
+        const std::string& msg,
+        unsigned int timeout /* = 5000 */) const
+    {
+        NOTIFYICONDATA data;
+
+        data.cbSize = sizeof(NOTIFYICONDATA);
+        data.hWnd = mWindow;
+        data.uID = TRAY_ID;
+        data.uFlags = NIF_INFO;
+        data.uTimeout = timeout;
+
+        // 128 is the maximum bytes allowed in szInfo
+        strncpy(data.szInfo, msg.c_str(), 128);
+        // and 64 ub szInfoTitle
+        strncpy(data.szInfoTitle, title.c_str(), 64);
+
+        data.dwInfoFlags = NIIF_USER;
+
+        Shell_NotifyIcon(NIM_MODIFY, &data);
     }
 
     //==================================================

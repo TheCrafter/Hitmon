@@ -56,10 +56,10 @@ public:
     /// Retrieves a pointer to the class name
     LPCTSTR GetClassName() const;
 
-private:
     /// Class name to use with RegisterClass[Ex]()
-    const static std::string mClassName;
+    const static std::string CLASS_NAME;
 
+private:
     /// The icon that appears in system tray
     TrayIcon mTrayIcon;
 

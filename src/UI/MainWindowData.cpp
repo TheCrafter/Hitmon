@@ -8,7 +8,7 @@ namespace UI
     //= Static members
     //==================================================
 
-    const std::string MainWindowData::mClassName = "MainWindowClass";
+    const std::string MainWindowData::CLASS_NAME = "MainWindowClass";
 
 
     //==================================================
@@ -39,6 +39,14 @@ namespace UI
                 }
             }break;
 
+            case TRAY_HIT_MILESTONE:
+            {
+                int* x = (int*)wParam;
+                mTrayIcon.ShowBalloon("Milestone reached",
+                                      "Current hits: " + std::to_string(*x));
+                delete x;
+            }break;
+
             case WM_CREATE:
             {
                 mTrayIcon.Init(window, mInstance, "Hitmon is running...");
@@ -62,7 +70,7 @@ namespace UI
 
     LPCTSTR MainWindowData::GetClassName() const
     {
-        return mClassName.c_str();
+        return CLASS_NAME.c_str();
     }
 
 } // namespace UI

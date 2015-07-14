@@ -59,6 +59,11 @@ public:
     /// Show popup menu
     void ShowMenu();
 
+    /// Show a notification balloon
+    void ShowBalloon(const std::string& title,
+                     const std::string& msg,
+                     unsigned int timeout = 5000) const;
+
 private:
     /// Struct that holds the icon's data
     NOTIFYICONDATA mIconData;
