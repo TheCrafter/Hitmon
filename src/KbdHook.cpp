@@ -3,7 +3,7 @@
 #include "UI/MainWindowData.hpp"
 
 KbdHook* kbdObjPtr = nullptr;
-unsigned int count = 0;
+long long count = 0;
 
 //==================================================
 //= Static functions
@@ -21,9 +21,9 @@ LRESULT CALLBACK KbdHook::LowLevelKeyboardProc(
     {
         kbdObjPtr->SetHitCount(kbdObjPtr->GetHitCount() + 1);
 
-        if(kbdObjPtr->GetHitCount() == 10)
+        if(kbdObjPtr->CheckVal(kbdObjPtr->GetHitCount()))
         {
-            int* x = new int(10);
+            long long* x = new long long(kbdObjPtr->GetHitCount());
             PostMessage(
                 FindWindow(UI::MainWindowData::CLASS_NAME.c_str(), 0),
                 TRAY_HIT_MILESTONE,
@@ -52,12 +52,17 @@ void KbdHook::Init(HINSTANCE instance)
     mHook = SetWindowsHookEx(WH_KEYBOARD_LL, LowLevelKeyboardProc, instance, 0);
 }
 
-unsigned int KbdHook::GetHitCount() const
+long long KbdHook::GetHitCount() const
 {
     return mHitCount;
 }
 
-void KbdHook::SetHitCount(unsigned int newCount)
+void KbdHook::SetHitCount(long long newCount)
 {
     mHitCount = newCount;
+}
+
+bool KbdHook::CheckVal(long long val)
+{
+    return mMilestone.CheckVal(val);
 }
