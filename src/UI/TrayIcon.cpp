@@ -1,5 +1,6 @@
 #include "TrayIcon.hpp"
 #include "Config.hpp"
+#include "Resources.hpp"
 #include <string>
 
 namespace UI
@@ -43,13 +44,7 @@ namespace UI
         mIconData.uID = TRAY_ID;
         mIconData.uFlags = NIF_MESSAGE | NIF_ICON | NIF_TIP;
         mIconData.uCallbackMessage = TRAY_MSG;
-        mIconData.hIcon = (HICON)LoadImage(
-            instance,
-            "res/hitmon.ico",
-            IMAGE_ICON,
-            LR_DEFAULTSIZE,
-            LR_DEFAULTSIZE,
-            LR_LOADFROMFILE);
+        mIconData.hIcon = LoadIcon(instance, MAKEINTRESOURCE(IDI_APP_ICON));
 
         // 128 is the maximum size allowed in szTip
         strncpy(mIconData.szTip, hoverMsg.c_str(), 128);
