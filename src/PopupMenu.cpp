@@ -32,7 +32,7 @@ void PopupMenu::AddItem(int pos, const std::string& title)
         newItem.id,
         title.c_str());
 
-    // Insert the new item on map
+    // Insert the new item in menu items map
     mMenuItems[newItem.id] = newItem;
 }
 

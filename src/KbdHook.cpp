@@ -21,7 +21,7 @@ LRESULT CALLBACK KbdHook::LowLevelKeyboardProc(
     {
         kbdObjPtr->SetHitCount(kbdObjPtr->GetHitCount() + 1);
 
-        if(kbdObjPtr->CheckVal(kbdObjPtr->GetHitCount()))
+        if(kbdObjPtr->IsMilestone(kbdObjPtr->GetHitCount()))
         {
             long long* x = new long long(kbdObjPtr->GetHitCount());
             PostMessage(
@@ -62,7 +62,7 @@ void KbdHook::SetHitCount(long long newCount)
     mHitCount = newCount;
 }
 
-bool KbdHook::CheckVal(long long val)
+bool KbdHook::IsMilestone(long long val)
 {
-    return mMilestone.CheckVal(val);
+    return mMilestone.IsMilestone(val);
 }

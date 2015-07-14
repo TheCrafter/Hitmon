@@ -37,21 +37,29 @@
 class KbdHook
 {
 public:
+    /// Destructor
     ~KbdHook();
 
+    /// Gets the object ready for usage
     void Init(HINSTANCE instance);
 
+    /// Returns the current hit count
     long long GetHitCount() const;
 
+    /// Updates the current hit count
     void SetHitCount(long long newCount);
 
-    bool CheckVal(long long val);
+    /// Returns true if val is a milesotne, false if not
+    bool IsMilestone(long long val);
 
 private:
+    /// To low level keyboard hook, used to get keyboard hits
     HHOOK mHook;
 
+    /// Current hit count, counting from the start of the program
     long long mHitCount;
 
+    /// Callback function for keyboard events
     static LRESULT CALLBACK LowLevelKeyboardProc(
         int    nCode,
         WPARAM wParam,
@@ -70,14 +78,14 @@ private:
         }
 
         /// Check if a value matches a milestone
-        bool CheckVal(long long val)
+        bool IsMilestone(long long val)
         {
             // Avoid unecessary checks to save time
             if(val != mNextValToCheck)
                 return false;
 
             mLastValToCheck = mNextValToCheck;
-            mNextValToCheck = GetNextVal(CurMilestone, RestMilestones...);
+            mNextValToCheck = GetNextMilestone(CurMilestone, RestMilestones...);
 
             return true;
         }
@@ -92,23 +100,23 @@ private:
         // Recursive checking for next value to check
         //----------------------------------------------
         template<typename CurMilestone, typename... rest>
-        long long GetNextVal(CurMilestone x, rest... args)
+        long long GetNextMilestone(CurMilestone x, rest... args)
         {
             if(mLastValToCheck == -1)
                 return x;
 
-            return (mLastValToCheck < x) ? x : GetNextVal(args...);
+            return (mLastValToCheck < x) ? x : GetNextMilestone(args...);
         }
 
         template<typename LastMilestone>
-        long long GetNextVal(LastMilestone x)
+        long long GetNextMilestone(LastMilestone x)
         {
             return x;
         }
         //----------------------------------------------
     };
 
-    Milestone<100, 1000, 5000, 10000, 50000, 100000, 1000000, 2000000> mMilestone;
+    Milestone<100, 1000, 5000, 7500, 10000, 50000, 100000, 300000, 1000000, 2000000, 5000000> mMilestone;
 };
 
 #endif
