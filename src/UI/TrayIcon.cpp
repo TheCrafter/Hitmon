@@ -110,11 +110,7 @@ namespace UI
             std::string msg = "Current hits: ";
             msg += std::to_string(mKbdHook.GetHitCount());
 
-            MessageBox(
-                window,
-                msg.c_str(),
-                "Current hits",
-                MB_ICONINFORMATION);
+            ShowBalloon("Current hits", msg);
         }
         //                                                   --> exit <--
         else if(item.id == mTaskbarIconMenu->GetIdByTitle(mMenuItemsStrings[1]))
