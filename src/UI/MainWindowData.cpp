@@ -32,7 +32,7 @@ namespace UI
             {
                 switch(lParam)
                 {
-                    case WM_LBUTTONDOWN:
+                    case WM_RBUTTONDOWN:
                     {
                         mTrayIcon.ShowMenu();
                     }break;
