@@ -1,6 +1,6 @@
 # Hitmon
 
-![Logo](doc/assets/hitmon_logo_256x256.png)
+![Logo](doc/assets/logo.png)
 
 Hitmon is a Win32 program that counts your daily keyboard hits. It can also serve as a good example for C++ beginners who would like to learn a thing or two about Windows programming and C++ Templates.
 
