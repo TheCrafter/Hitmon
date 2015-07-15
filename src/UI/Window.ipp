@@ -3,8 +3,8 @@
 //==================================================
 
 template<typename WindowData>
-Window<WindowData>::Window(WindowData data)
-    : mData(data)
+Window<WindowData>::Window(std::unique_ptr<WindowData>&& data)
+    : mData(std::move(data))
 {
 }
 
@@ -17,7 +17,7 @@ bool Window<WindowData>::Init(HINSTANCE instance)
     // Create window
     mWindow = CreateWindowEx(
         0,                              // Extended window style of the window created
-        mData.GetClassName(),           // Class name from previous call to RegisterClass[Ex]
+        mData->GetClassName(),           // Class name from previous call to RegisterClass[Ex]
         "Hitmon",                       // Window Name
         0,                              // Window style
         64,                             // Initial x position for window
@@ -56,7 +56,7 @@ bool Window<WindowData>::RegisterWindowClass(HINSTANCE instance)
         windowClass.hCursor = LoadCursor(0, IDC_CROSS);
         windowClass.hbrBackground = 0;
         windowClass.lpszMenuName = 0;
-        windowClass.lpszClassName = mData.GetClassName();
+        windowClass.lpszClassName = mData->GetClassName();
         windowClass.hIconSm = 0;
 
         return RegisterClassEx(&windowClass) != 0;
@@ -86,12 +86,12 @@ LRESULT CALLBACK Window<WindowData>::WindowProc(
         SetWindowLongPtr(window, GWLP_USERDATA, (LONG_PTR)thisPtr);
 
         // Return callback function
-        return thisPtr->mData.wndProcCallback(window, msg, wParam, lParam);
+        return thisPtr->mData->wndProcCallback(window, msg, wParam, lParam);
     }
 
     // Retrieve user data
     Window<WindowData>* thisPtr = (Window<WindowData>*)GetWindowLongPtr(window, GWLP_USERDATA);
 
     // Return callback function
-    return thisPtr->mData.wndProcCallback(window, msg, wParam, lParam);
+    return thisPtr->mData->wndProcCallback(window, msg, wParam, lParam);
 }

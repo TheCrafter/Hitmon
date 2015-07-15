@@ -1,6 +1,6 @@
 #include "KbdHook.hpp"
-#include "Config.hpp"
 #include "UI/MainWindowData.hpp"
+#include "IO/SaveFileIO.hpp"
 
 KbdHook* kbdObjPtr = nullptr;
 long long count = 0;
@@ -38,9 +38,18 @@ LRESULT CALLBACK KbdHook::LowLevelKeyboardProc(
 //==================================================
 //= Public functions
 //==================================================
+KbdHook::KbdHook()
+{
+    IO::SaveFileIO io(HITMON_SAVEFILE_NAME);
+    mHitCount = io.ReadTodaysHits();
+}
 
 KbdHook::~KbdHook()
 {
+    // Save count
+    IO::SaveFileIO io(HITMON_SAVEFILE_NAME);
+    io.SaveCount(mHitCount);
+
     UnhookWindowsHookEx(mHook);
 }
 

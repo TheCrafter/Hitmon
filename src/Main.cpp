@@ -44,11 +44,13 @@
 /******************************************************************************/
 
 #include <windows.h>
+#include <memory>
 #include "Config.hpp"
 #include "PopupMenu.hpp"
 #include "UI/Window.hpp"
 #include "UI/MainWindowData.hpp"
 #include "UI/TrayIcon.hpp"
+#include "IO/SaveFileIO.hpp"
 
 int CALLBACK WinMain(
     HINSTANCE instance,
@@ -61,11 +63,11 @@ int CALLBACK WinMain(
     (void)cmdArgs;
     (void)cmdShow;
 
-    // Create the window data
-    UI::MainWindowData data(instance);
+    std::unique_ptr<UI::MainWindowData> ptr(new UI::MainWindowData(instance));
+    
 
     // Create the window
-    UI::Window<UI::MainWindowData> window(data);
+    UI::Window<UI::MainWindowData> window(std::move(ptr));
     if(!window.Init(instance))
         return -1;
 

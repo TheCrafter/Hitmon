@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\IO\SaveFileIO.cpp" />
     <ClCompile Include="..\..\src\KbdHook.cpp" />
     <ClCompile Include="..\..\src\Main.cpp" />
     <ClCompile Include="..\..\src\PopupMenu.cpp" />
@@ -27,6 +28,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\Config.hpp" />
+    <ClInclude Include="..\..\src\IO\SaveFileIO.hpp" />
     <ClInclude Include="..\..\src\KbdHook.hpp" />
     <ClInclude Include="..\..\src\PopupMenu.hpp" />
     <ClInclude Include="..\..\src\Resources.hpp" />

@@ -43,99 +43,33 @@
 /*                                                                            */
 /******************************************************************************/
 
-#ifndef HITMON_KBDHOOK
-#define HITMON_KBDHOOK
+#ifndef HITMON_SAVEFILEIO
+#define HITMON_SAVEFILEIO
 
-#include <Windows.h>
 #include <string>
-#include "Config.hpp"
 
-class KbdHook
+namespace IO
+{
+
+class SaveFileIO
 {
 public:
-    /// Constructor
-    KbdHook();
+    /// Constructors
+    SaveFileIO(const std::string& filename);
 
-    /// Destructor
-    ~KbdHook();
+    /// Saves the current hitcount. Returns false if something goes wrong
+    bool SaveCount(long long hitCount) const;
 
-    /// Gets the object ready for usage
-    void Init(HINSTANCE instance);
-
-    /// Returns the current hit count
-    long long GetHitCount() const;
-
-    /// Updates the current hit count
-    void SetHitCount(long long newCount);
-
-    /// Returns true if val is a milesotne, false if not
-    bool IsMilestone(long long val);
+    /// Reads the save file and returns the hits
+    /// ONLY if we're still on the same day
+    /// Returns 0 if something goes wrong
+    long long ReadTodaysHits() const;
 
 private:
-    /// To low level keyboard hook, used to get keyboard hits
-    HHOOK mHook;
-
-    /// Current hit count, counting from the start of the program
-    long long mHitCount;
-
-    /// Callback function for keyboard events
-    static LRESULT CALLBACK LowLevelKeyboardProc(
-        int    nCode,
-        WPARAM wParam,
-        LPARAM lParam);
-
-    /// Templated class to bundle milesotne logic
-    template<long long CurMilestone, long long... RestMilestones>
-    class Milestone
-    {
-    public:
-        /// Constructor
-        Milestone()
-        {
-            mNextValToCheck = CurMilestone;
-            mLastValToCheck = -1;
-        }
-
-        /// Check if a value matches a milestone
-        bool IsMilestone(long long val)
-        {
-            // Avoid unecessary checks to save time
-            if(val != mNextValToCheck)
-                return false;
-
-            mLastValToCheck = mNextValToCheck;
-            mNextValToCheck = GetNextMilestone(CurMilestone, RestMilestones...);
-
-            return true;
-        }
-
-    private:
-        /// The next value to be checked
-        long long mNextValToCheck;
-
-        /// The last value we checked (initial value: -1)
-        long long mLastValToCheck;
-
-        // Recursive checking for next value to check
-        //----------------------------------------------
-        template<typename CurMilestone, typename... rest>
-        long long GetNextMilestone(CurMilestone x, rest... args)
-        {
-            if(mLastValToCheck == -1)
-                return x;
-
-            return (mLastValToCheck < x) ? x : GetNextMilestone(args...);
-        }
-
-        template<typename LastMilestone>
-        long long GetNextMilestone(LastMilestone x)
-        {
-            return x;
-        }
-        //----------------------------------------------
-    };
-
-    Milestone<100, 1000, 5000, 7500, 10000, 50000, 100000, 300000, 1000000, 2000000, 5000000> mMilestone;
+    /// Filename to save/read data
+    std::string mFilename;
 };
+
+} // namespace IO
 
 #endif

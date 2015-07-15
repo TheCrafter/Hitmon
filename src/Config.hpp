@@ -46,11 +46,17 @@
 #ifndef HITMON_CONFIG
 #define HITMON_CONFIG
 
+#include <string>
+
+// Defines
 #define TRAY_ID 6969
 
 #define TRAY_MSG_OFFSET WM_USER + 1
 
 #define TRAY_MSG TRAY_MSG_OFFSET + 1
 #define TRAY_HIT_MILESTONE TRAY_MSG_OFFSET + 2
+
+// Global constants
+const std::string HITMON_SAVEFILE_NAME("Hitmon_save_file");
 
 #endif

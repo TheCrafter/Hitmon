@@ -46,10 +46,11 @@
 #ifndef HITMON_WINDOW
 #define HITMON_WINDOW
 
+#include <Windows.h>
+#include <memory>
+
 namespace UI
 {
-
-#include <Windows.h>
 
 //==================================================
 /// Wrapper class for creating windows using the WINAPI.
@@ -63,7 +64,7 @@ class Window
 {
 public:
     /// Constructor
-    Window(WindowData data);
+    Window(std::unique_ptr<WindowData>&& data);
 
     /// Register class and create window
     bool Init(HINSTANCE instance);
@@ -73,7 +74,7 @@ public:
 
 private:
     /// Window's data
-    WindowData mData;
+    std::unique_ptr<WindowData> mData;
 
     /// Handle to the window
     HWND mWindow;
