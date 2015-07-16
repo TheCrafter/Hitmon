@@ -22,6 +22,8 @@ Hitmon is a Win32 program that counts your daily keyboard hits. It can also serv
 
 When you open the executable a small icon appears in system tray. Hitmon now counts your keyboard hits. Every once in a while it will notify you that you reached a certain amount of hits (for example 10.000). Additionally, you can view your current hit count at any time by clicking on the icon and choosing the appropriate option. To shutdown Hitmon just choose exit from menu.
 
+Additionally, Hitmon creates a save file right next to the executable. On shutdown, Hitmon saves the current date and hit count on this file. On startup, it reads the file, and if there are previous hits from today, loads them. That means that you can start Hitmon in the morning, shutdown your PC a few hours after to go out pretending you have a life, and when you come back Hitmon will recover your hit count!
+
 ## <a name="requirements"/> Requirements
  * For building the project you need to have msvc compiler (I built it with Visual Studio 2013).
 
@@ -46,7 +48,7 @@ Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
-    [http://www.apache.org/licenses/LICENSE-2.0](http://www.apache.org/licenses/LICENSE-2.0)
+http://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,

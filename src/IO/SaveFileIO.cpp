@@ -64,21 +64,9 @@ namespace IO
         if(stream.fail())
             return 0;
 
-        // Count characters in file
-        stream.seekg(0, std::ios_base::end);
-        std::streampos pos = stream.tellg();
-        stream.seekg(0, std::ios_base::beg);
-
-        // Init buffer to hold the read data
-        int bufsize = static_cast<int>(pos) + 1;
-        std::unique_ptr<char> buf(new char[bufsize]);
-        memset(buf.get(), 0, bufsize);
-
-        // Retrieve the saved data
-        stream.getline(buf.get(), bufsize);
-
-        // Convert char* buffer to string
-        std::string bufStr(buf.get());
+        // Read line
+        std::string bufStr;
+        std::getline(stream, bufStr);
 
         // Check if read was successful
         if(stream.fail())
