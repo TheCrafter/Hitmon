@@ -12,7 +12,7 @@ namespace UI
     TrayIcon::TrayIcon()
     {
         mMenuItemsStrings.push_back("Show current hits today");
-        mMenuItemsStrings.push_back("exit");
+        mMenuItemsStrings.push_back("Exit");
     }
 
     void TrayIcon::Init(HWND window, HINSTANCE instance, const std::string& hoverMsg)
