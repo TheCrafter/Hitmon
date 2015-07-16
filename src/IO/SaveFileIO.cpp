@@ -3,45 +3,20 @@
 #include <fstream>
 #include <chrono>
 #include <ctime>
+#include <memory>
+#include "SaveFile.hpp"
 
 namespace IO
 {
     //==================================================
-    //= Non-member functions
+    //= Non-member function declaration
     //==================================================
 
-    std::string::const_iterator GetIteratorToChar(const std::string&& str, char check, unsigned int pos)
-    {
-        std::string::const_iterator it = std::begin(str);
-        for(unsigned int i = 0; i < pos; i++)
-            it = std::find(it + 1, std::end(str), check);
+    // Remove time from date string
+    std::string RemoveTimeFromDate(const std::string&& str);
 
-        return std::move(it);
-    }
-
-    std::string RemoveTimeFromDate(const std::string&& str)
-    {
-        // ctime returns time at this format: Wed May 30 12:25:03 2012
-        // We only need the "Wed May 30" part. That's why we return a
-        // substring from the start till the 3rd space
-
-        // Get an iterator to 3rd space character location
-        std::string::const_iterator it = GetIteratorToChar(std::move(str), ' ', 3);
-        
-        return std::string(std::begin(str), it);
-    }
-
-    std::string FormatReadFile(const std::string& str)
-    {
-        // The file already contains data in this format: Thu Jul 16 500
-        // We only need the "500" part. That's why we return a substring
-        // from the 3rd space till the end
-
-        // Get an iterator to 3rd space character location
-        std::string::const_iterator it = GetIteratorToChar(std::move(str), ' ', 3);
-        
-        return std::string(it, std::end(str));
-    }
+    // Get a string with current date and time
+    std::string GetCurrentTime();
 
     //==================================================
     //= Public functions
@@ -60,17 +35,15 @@ namespace IO
         if(stream.fail())
             return false;
 
-        // Get current time
-        std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
-        time_t curTime = std::chrono::system_clock::to_time_t(now);
-
         // Get date string and reformat it
-        std::string date(
-            RemoveTimeFromDate(std::string(ctime(&curTime))) +
-            " " +
-            std::to_string(hitCount));
+        std::string date(RemoveTimeFromDate(GetCurrentTime()));
 
-        stream.write(date.c_str(), date.length());
+        // Create save file
+        SaveFile saveFile(date, hitCount);
+
+        // Create string to write
+        std::string toWrite(saveFile.GetDate() + " " + std::to_string(saveFile.GetCount()));
+        stream.write(toWrite.c_str(), toWrite.length());
 
         // Check if write was successful
         if(stream.fail())
@@ -98,26 +71,53 @@ namespace IO
 
         // Init buffer to hold the read data
         int bufsize = static_cast<int>(pos) + 1;
-        char* buf = new char[bufsize];
-        memset(buf, 0, bufsize);
+        std::unique_ptr<char> buf(new char[bufsize]);
+        memset(buf.get(), 0, bufsize);
 
         // Retrieve the saved data
-        stream.getline(buf, bufsize);
+        stream.getline(buf.get(), bufsize);
 
         // Convert char* buffer to string
-        std::string bufStr(buf);
-
-        // Free allocated space
-        delete buf;
+        std::string bufStr(buf.get());
 
         // Check if read was successful
         if(stream.fail())
             return 0;
 
-        // Strip down the string
-        std::string hits(FormatReadFile(bufStr));
+        // Create SaveFily by parsing the string we read
+        SaveFile saveFile(bufStr);
 
-        return std::stoll(hits);
+        // Check if the saved data is from today
+        if(!saveFile.IsToday())
+            return 0;
+
+        return saveFile.GetCount();
     }
 
+
+    //==================================================
+    //= Non-member function implementation
+    //==================================================}
+
+    std::string RemoveTimeFromDate(const std::string&& str)
+    {
+        // ctime returns time at this format: Wed May 30 12:25:03 2012
+        // We only need the "Wed May 30" part. That's why we return a
+        // substring from the start till the 3rd space
+
+        // Get an iterator to 3rd space character location
+        std::string::const_iterator it = std::begin(str);
+        for(unsigned int i = 0; i < 3; i++)
+            it = std::find(it + 1, std::end(str), ' ');
+
+        return std::string(std::begin(str), it);
+    }
+
+    std::string GetCurrentTime()
+    {
+        std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
+        time_t curTime = std::chrono::system_clock::to_time_t(now);
+
+        return std::string(ctime(&curTime));
+    }
 }
