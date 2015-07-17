@@ -1,4 +1,4 @@
-# Hitmon
+# Hitmon - v1.0.0
 
 ![Logo](doc/assets/logo.png)
 
